@@ -1,0 +1,19 @@
+{
+    "name": "proxy/server",
+    "description": "php proxy server",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Proxy\\": "./"
+        }
+    },
+    "authors": [
+        {
+            "name": "adriantech",
+            "email": "dev@adriantech.eu"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.0"
+    }
+}
