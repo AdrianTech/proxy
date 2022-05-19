@@ -2,28 +2,31 @@
 
 namespace Proxy\Main;
 
+use Exception;
 use GuzzleHttp\Client;
 use Proxy\Config\Base as Config;
 
 class Operate
 {
-    public Config $config;
-    public function __construct()
+    // public Config $config;
+    public function __construct(Config $config)
     {
-        $this->config = new Config();
+        $this->config = $config;
     }
 
     /**
      * Get data from external API by using Guzzle HTTP Client
-     * @param string $method
-     * @param string $url
      */
-    public function getData(): string
+    public function getData(): ?string
     {
-        $url = $this->processUrl();
-        $client = new Client();
-        $res = $client->request($this->getMethod(), $url);
-        return $res->getBody()->getContents();
+        try {
+            $url = $this->processUrl();
+            $client = new Client();
+            $res = $client->request($this->getMethod(), $url);
+            return $res->getBody()->getContents();
+        } catch (Exception $e) {
+            return "Not found";
+        }
     }
 
     /**
@@ -34,11 +37,10 @@ class Operate
         $params = str_replace(['api/'], [''], $_SERVER['REQUEST_URI']);
         $filtered = $this->filterWebsites()[0] ?? false;
         if (!$filtered) {
-            return self::httpResponseCode(404);
+            return $this->config->httpResponseCode(404);
         }
-        $request_uri = "{$params}&{$filtered['api_key_name']}={$filtered['key_value']}";
-        $finalUri = "{$filtered['base_external_url']}" . $request_uri;
-        return $finalUri;
+        $request_uri = "{$filtered['base_external_url']}{$params}&{$filtered['api_key_name']}={$filtered['key_value']}";
+        return $request_uri;
     }
 
     public function getMethod(): string
@@ -46,13 +48,8 @@ class Operate
         return strtolower($_SERVER['REQUEST_METHOD']);
     }
 
-    public static function httpResponseCode(int $code): int
-    {
-        return http_response_code($code);
-    }
 
-
-    public function filterWebsites()
+    public function filterWebsites(): ?array
     {
         require dirname(__DIR__) . '/store/websites.php';
         $filtered = array_values(array_filter($websites, function ($website) {

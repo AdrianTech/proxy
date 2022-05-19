@@ -2,16 +2,19 @@
 
 namespace Proxy\Main;
 
+use Proxy\Config\Base as Config;
+
 class App
 {
     public Operate $operate;
+    public Config $config;
 
     public function __construct()
     {
-        $this->operate = new Operate();
+        $this->config = new Config();
+        $this->operate = new Operate($this->config);
         $this->start();
     }
-
 
     public function start()
     {
