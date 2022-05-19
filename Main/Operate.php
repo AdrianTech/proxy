@@ -6,11 +6,11 @@ use Exception;
 use GuzzleHttp\Client;
 use Proxy\Config\Base as Config;
 
-class Operate
+class Operate extends Core
 {
-    // public Config $config;
     public function __construct(Config $config)
     {
+        $this->setDomain();
         $this->config = $config;
     }
 
@@ -37,15 +37,9 @@ class Operate
         $params = str_replace(['api/'], [''], $_SERVER['REQUEST_URI']);
         $filtered = $this->filterWebsites()[0] ?? false;
         if (!$filtered) {
-            return $this->config->httpResponseCode(404);
+            return $this->httpResponseCode(404);
         }
-        $request_uri = "{$filtered['base_external_url']}{$params}&{$filtered['api_key_name']}={$filtered['key_value']}";
-        return $request_uri;
-    }
-
-    public function getMethod(): string
-    {
-        return strtolower($_SERVER['REQUEST_METHOD']);
+        return "{$filtered['base_external_url']}{$params}&{$filtered['api_key_name']}={$filtered['key_value']}";
     }
 
 
@@ -53,7 +47,7 @@ class Operate
     {
         require dirname(__DIR__) . '/store/websites.php';
         $filtered = array_values(array_filter($websites, function ($website) {
-            if ($website['base_url'] === $this->config->domainID) {
+            if ($website['base_url'] === $this->getDomain()) {
                 return $website;
             }
         }));

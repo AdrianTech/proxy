@@ -2,29 +2,25 @@
 
 namespace Proxy\Config;
 
-class Base
+use Proxy\Main\Core;
+
+class Base extends Core
 {
-    public $domainID = "";
     public function __construct()
     {
-        $this->domainID = getallheaders()['domain'] ?? false;
+        $this->setDomain();
         $this->config();
     }
 
-    private function config()
+    public function config()
     {
         header("Access-Control-Allow-Origin: *");
         header('Access-Control-Allow-Methods: GET, OPTIONS');
         header('Access-Control-Allow-Headers: Origin, Content-Type, Accept, Domain');
 
-        if (!$this->domainID) {
+        if (!$this->getDomain()) {
             echo $this->httpResponseCode(400);
             exit;
         }
-    }
-
-    public function httpResponseCode(int $code): int
-    {
-        return http_response_code($code);
     }
 }

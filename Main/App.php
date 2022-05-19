@@ -4,7 +4,7 @@ namespace Proxy\Main;
 
 use Proxy\Config\Base as Config;
 
-class App
+class App extends Core
 {
     public Operate $operate;
     public Config $config;
