@@ -4,7 +4,6 @@ namespace Proxy\Main;
 
 abstract class Core
 {
-    protected $domain = "";
 
     public function httpResponseCode(int $code): int
     {
@@ -16,13 +15,13 @@ abstract class Core
         return strtolower($_SERVER['REQUEST_METHOD']);
     }
 
-    public function setDomain()
+    public function getAllHeaders()
     {
-        $this->domain = getallheaders()['domain'] ?? false;
+        return getallheaders();
     }
 
-    public function getDomain(): ?string
+    public function getBody()
     {
-        return $this->domain;
+        return json_decode(file_get_contents("php://input"), true);
     }
 }

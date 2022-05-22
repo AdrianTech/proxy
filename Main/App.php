@@ -2,6 +2,7 @@
 
 namespace Proxy\Main;
 
+
 use Proxy\Config\Base as Config;
 
 class App extends Core
